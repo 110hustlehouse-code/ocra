@@ -1,0 +1,170 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { TENANT } from "@/lib/demo/data";
+
+const NAV = [
+  { href: "/dashboard", label: "Dashboard", hint: "Oggi", icon: Grid },
+  { href: "/clienti", label: "Clienti", hint: "Anagrafica e progetti", icon: Users },
+  { href: "/pipeline", label: "Pipeline", hint: "Trattative", icon: Funnel },
+  { href: "/studio", label: "AI Studio", hint: "Verbali, preventivi, bandi", icon: Spark },
+  { href: "/operativo", label: "Operativo", hint: "Contabilità e scadenze", icon: Ledger },
+];
+
+export function Sidebar() {
+  const pathname = usePathname();
+
+  return (
+    <aside
+      className="fixed left-0 top-0 h-screen w-[228px] flex flex-col z-20"
+      style={{ background: "var(--sidebar)" }}
+    >
+      {/* Marchio */}
+      <div className="px-4 pt-5 pb-4">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0"
+            style={{ background: "var(--brand)" }}
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="#fff" strokeWidth="2" />
+              <path d="M8 2a6 6 0 0 1 6 6" stroke="var(--brand)" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
+          </div>
+          <div className="leading-tight">
+            <div className="text-[13px] font-semibold text-white tracking-tight">OCRA</div>
+            <div className="text-[10.5px]" style={{ color: "var(--sidebar-text)" }}>
+              {TENANT.name}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav className="flex-1 px-2.5 space-y-0.5">
+        {NAV.map(({ href, label, hint, icon: Icon }) => {
+          const active = pathname === href || pathname.startsWith(href + "/");
+          return (
+            <Link
+              key={href}
+              href={href}
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-[9px] transition-colors group"
+              style={{
+                background: active ? "var(--sidebar-hover)" : "transparent",
+                color: active ? "#fff" : "var(--sidebar-text)",
+              }}
+            >
+              <Icon active={active} />
+              <span className="flex-1 min-w-0">
+                <span className="block text-[12.5px] font-medium leading-tight">{label}</span>
+                <span
+                  className="block text-[10.5px] truncate leading-tight mt-px"
+                  style={{ color: active ? "#7e8089" : "#606269" }}
+                >
+                  {hint}
+                </span>
+              </span>
+              {active && (
+                <span className="w-1 h-1 rounded-full shrink-0" style={{ background: "var(--brand)" }} />
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Stato integrazioni */}
+      <div className="px-4 py-3 mx-2.5 mb-2 rounded-[10px]" style={{ background: "#191a1e" }}>
+        <div
+          className="text-[9.5px] font-semibold tracking-[0.08em] uppercase mb-2"
+          style={{ color: "#5d5f66" }}
+        >
+          Integrazioni
+        </div>
+        {[
+          ["Fireflies", true],
+          ["Google Workspace", true],
+          ["n8n", true],
+          ["Fatture in Cloud", false],
+        ].map(([n, on]) => (
+          <div key={n as string} className="flex items-center gap-2 py-[3px]">
+            <span
+              className="w-1.5 h-1.5 rounded-full shrink-0"
+              style={{ background: on ? "#2fb888" : "#4a4c53" }}
+            />
+            <span className="text-[11px]" style={{ color: on ? "#9a9ca3" : "#5d5f66" }}>
+              {n as string}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="px-4 py-3 border-t" style={{ borderColor: "#232429" }}>
+        <div className="flex items-center gap-2.5">
+          <span
+            className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold"
+            style={{ background: "#2a2c32", color: "#c9cbd1" }}
+          >
+            D
+          </span>
+          <div className="min-w-0">
+            <div className="text-[11.5px] text-white leading-tight">Daniele</div>
+            <div className="text-[10px] leading-tight" style={{ color: "#5d5f66" }}>
+              Amministratore
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+/* ── Icone (tratto 1.5, 16px) ── */
+type IP = { active?: boolean };
+const S = (a?: boolean) => ({
+  width: 16, height: 16, viewBox: "0 0 16 16", fill: "none",
+  stroke: a ? "#ffffff" : "currentColor", strokeWidth: 1.5,
+  strokeLinecap: "round" as const, strokeLinejoin: "round" as const,
+});
+
+function Grid({ active }: IP) {
+  return (
+    <svg {...S(active)}>
+      <rect x="2" y="2" width="5" height="5" rx="1.4" />
+      <rect x="9" y="2" width="5" height="5" rx="1.4" />
+      <rect x="2" y="9" width="5" height="5" rx="1.4" />
+      <rect x="9" y="9" width="5" height="5" rx="1.4" />
+    </svg>
+  );
+}
+function Users({ active }: IP) {
+  return (
+    <svg {...S(active)}>
+      <circle cx="6" cy="5" r="2.4" />
+      <path d="M1.8 13.4c0-2.3 1.9-3.8 4.2-3.8s4.2 1.5 4.2 3.8" />
+      <path d="M11 3.1a2.4 2.4 0 0 1 0 4.6M12.2 9.9c1.3.5 2.1 1.6 2.1 3.1" />
+    </svg>
+  );
+}
+function Funnel({ active }: IP) {
+  return (
+    <svg {...S(active)}>
+      <path d="M2 3h12l-4.6 5.2v4.4L6.6 14V8.2z" />
+    </svg>
+  );
+}
+function Spark({ active }: IP) {
+  return (
+    <svg {...S(active)}>
+      <path d="M8 1.8l1.5 3.9 3.9 1.5-3.9 1.5L8 12.6 6.5 8.7 2.6 7.2l3.9-1.5z" />
+      <path d="M12.6 11.4l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" />
+    </svg>
+  );
+}
+function Ledger({ active }: IP) {
+  return (
+    <svg {...S(active)}>
+      <rect x="2.5" y="2" width="11" height="12" rx="1.6" />
+      <path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3" />
+    </svg>
+  );
+}
