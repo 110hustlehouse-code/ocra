@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verifica:
+    name: Tipi, lint e build
+    runs-on: ubuntu-latest
+
+    # Valori fittizi: servono solo perché la build non si lamenti.
+    # Le chiavi vere staranno nei secret dell'hosting, mai qui.
+    env:
+      DATABASE_URL: postgresql://ocra:ocra@localhost:5432/ocra
+      NEXTAUTH_SECRET: valore-fittizio-per-la-build
+      ANTHROPIC_API_KEY: valore-fittizio-per-la-build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installa le dipendenze
+        run: npm ci
+
+      - name: Genera il client Prisma
+        run: npx prisma generate
+
+      - name: Controllo dei tipi
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Build di produzione
+        run: npm run build
