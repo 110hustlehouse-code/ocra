@@ -9,3 +9,5 @@ node_modules/
 .env*.local
 ocra-local/
 *.tsbuildinfo
+
+!.env.example
