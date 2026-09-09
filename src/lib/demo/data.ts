@@ -58,6 +58,7 @@ export type Lead = {
   value: number;
   source: string;
   owner: string;
+  firstTouch?: string;
   lastTouch: string;
   nextFollowUp: string | null;
   note: string;
