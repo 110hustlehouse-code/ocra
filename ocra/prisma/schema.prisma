@@ -1,0 +1,277 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── MULTI-TENANT ───
+
+model Tenant {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  logo          String?
+  colorPrimary  String   @default("#1a1a1a")
+  colorSecondary String  @default("#e85d24")
+  domain        String?
+  plan          String   @default("standard")
+  modulesActive String[] @default(["onboarding", "crm", "accounting"])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  users         User[]
+  services      Service[]
+  clients       Client[]
+  projects      Project[]
+  quotes        Quote[]
+  bandi         Bando[]
+  meetings      Meeting[]
+  releases      Release[]
+  invoices      Invoice[]
+  leads         Lead[]
+  integrations  Integration[]
+}
+
+// ─── AUTH ───
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  role          String    @default("member")
+  tenantId      String
+  tenant        Tenant    @relation(fields: [tenantId], references: [id])
+  emailVerified DateTime?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── SERVIZI DEL TENANT ───
+
+model Service {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  name        String
+  category    String
+  description String?
+  components  String[]
+  priceFrom   Float
+  createdAt   DateTime @default(now())
+
+  quoteItems  QuoteItem[]
+}
+
+// ─── CLIENTI DEL TENANT ───
+
+model Client {
+  id             String   @id @default(cuid())
+  tenantId       String
+  tenant         Tenant   @relation(fields: [tenantId], references: [id])
+  companyName    String
+  vatNumber      String?
+  contactName    String
+  contactEmail   String
+  contactPhone   String?
+  sector         String?
+  status         String   @default("active")
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  projects       Project[]
+  quotes         Quote[]
+  leads          Lead[]
+}
+
+// ─── PROGETTI ───
+
+model Project {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  clientId    String?
+  client      Client?  @relation(fields: [clientId], references: [id])
+  name        String
+  poCode      String?
+  status      String   @default("active")
+  driveFolderId String?
+  trelloBoardId String?
+  budgetPlanned Float?
+  budgetActual  Float?
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  invoices    Invoice[]
+}
+
+// ─── PREVENTIVI ───
+
+model Quote {
+  id          String      @id @default(cuid())
+  tenantId    String
+  tenant      Tenant      @relation(fields: [tenantId], references: [id])
+  clientId    String?
+  client      Client?     @relation(fields: [clientId], references: [id])
+  title       String
+  content     String?
+  totalPrice  Float?
+  status      String      @default("draft")
+  pdfUrl      String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  items       QuoteItem[]
+}
+
+model QuoteItem {
+  id        String  @id @default(cuid())
+  quoteId   String
+  quote     Quote   @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  serviceId String
+  service   Service @relation(fields: [serviceId], references: [id])
+  price     Float
+  notes     String?
+}
+
+// ─── CRM / PIPELINE ───
+
+model Lead {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  clientId    String?
+  client      Client?  @relation(fields: [clientId], references: [id])
+  contactName String
+  contactEmail String?
+  company     String?
+  stage       String   @default("lead")
+  value       Float?
+  source      String?
+  lostReason  String?
+  nextFollowUp DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── RIUNIONI / VERBALI ───
+
+model Meeting {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  title         String
+  date          DateTime
+  duration      Int?
+  participants  String[]
+  transcription String?
+  summary       String?
+  decisions     String?
+  actions       String?
+  status        String   @default("scheduled")
+  createdAt     DateTime @default(now())
+}
+
+// ─── BANDI ───
+
+model Bando {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  name        String
+  entity      String
+  description String?
+  deadline    DateTime?
+  amount      String?
+  url         String?
+  relevance   String?
+  status      String   @default("new")
+  createdAt   DateTime @default(now())
+}
+
+// ─── RELEASE DISCOGRAFICHE ───
+
+model Release {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id])
+  artistName    String
+  trackTitle    String
+  distributor   String?
+  releaseDate   DateTime?
+  status        String   @default("planning")
+  coverUploaded Boolean  @default(false)
+  masterUploaded Boolean @default(false)
+  pitchSent     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ─── CONTABILITÀ ───
+
+model Invoice {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id])
+  poCode      String?
+  type        String
+  direction   String
+  counterpart String
+  amount      Float
+  vatAmount   Float?
+  description String?
+  dueDate     DateTime?
+  paidDate    DateTime?
+  status      String   @default("pending")
+  documentUrl String?
+  createdAt   DateTime @default(now())
+}
+
+// ─── INTEGRAZIONI ───
+
+model Integration {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  type        String
+  credentials String?
+  config      String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
