@@ -33,7 +33,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               maxWidth: 360,
             }}
           >
-            <span style={{ fontSize: "15px" }}>{t.tone === "ok" ? "\u2713" : t.tone === "brand" ? "\u26A1" : "\u23F3"}</span>
+            <span style={{ fontSize: "15px" }}>{t.tone === "ok" ? "✓" : t.tone === "brand" ? "⚡" : "⏳"}</span>
             {t.message}
           </div>
         ))}

@@ -29,6 +29,7 @@ export function VerbaliTab() {
 
   return (
     <div className="grid grid-cols-[290px_1fr] gap-5 items-start">
+      {/* Elenco riunioni */}
       <div className="space-y-4">
         <Panel
           title="Riunioni"
@@ -66,7 +67,10 @@ export function VerbaliTab() {
           </div>
         </Panel>
 
-        <button className="btn btn-ghost w-full" onClick={() => { setManual(true); }}>
+        <button
+          className="btn btn-ghost w-full"
+          onClick={() => { setManual(true); }}
+        >
           Incolla una trascrizione
         </button>
 
@@ -80,6 +84,7 @@ export function VerbaliTab() {
         </div>
       </div>
 
+      {/* Dettaglio */}
       <div className="space-y-4">
         {manual ? (
           <>

@@ -4,11 +4,13 @@ import * as React from "react";
 import { useStore } from "@/lib/demo/store";
 import { eur, eur2, dayMonth, dateIt, daysFromToday, TODAY, generatePoCode, services } from "@/lib/demo/data";
 import { Badge, Panel, PageHead, Empty } from "@/components/ui/kit";
+import { useToast } from "@/components/ui/toast";
 
 type Filter = "tutte" | "entrate" | "uscite" | "scadute";
 
 export default function OperativoPage() {
   const s = useStore();
+  const toast = useToast();
   const [filter, setFilter] = React.useState<Filter>("tutte");
 
   const entrate = s.invoices.filter((i) => i.direction === "E");
@@ -32,7 +34,7 @@ export default function OperativoPage() {
       <PageHead
         title="Operativo"
         sub="Scadenziario, codici PO e flussi di cassa previsti"
-        actions={<button className="btn btn-primary">+ Registra documento</button>}
+        actions={<button className="btn btn-primary" onClick={() => toast("Registrazione documento in arrivo nella prossima versione", "warn")}>+ Registra documento</button>}
       />
 
       <div className="grid grid-cols-4 gap-4 mb-5">
@@ -209,6 +211,7 @@ function Cashflow({ invoices }: { invoices: ReturnType<typeof useStore>["invoice
 /* ── Solleciti automatici ── */
 function Solleciti() {
   const s = useStore();
+  const toast = useToast();
   const overdue = s.invoices.filter((i) => i.direction === "E" && i.status === "overdue");
 
   return (
@@ -224,7 +227,7 @@ function Solleciti() {
                 <div className="t-meta">
                   {eur2(i.amount)} · scaduta il {dateIt(i.dueDate)} · {-daysFromToday(i.dueDate)} giorni
                 </div>
-                <button className="btn btn-ghost btn-sm mt-2">Invia sollecito cortese</button>
+                <button className="btn btn-ghost btn-sm mt-2" onClick={() => toast(`Sollecito inviato a ${i.counterpart}`)}>Invia sollecito cortese</button>
               </div>
             ))}
             <p className="t-meta mt-3 leading-relaxed">

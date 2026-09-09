@@ -5,12 +5,15 @@ import { useStore } from "@/lib/demo/store";
 import { STAGES, eur, dayMonth, daysFromToday, type Stage } from "@/lib/demo/data";
 import { Badge, PageHead, Avatar, Panel } from "@/components/ui/kit";
 import { Modal } from "@/components/ui/modal";
+import { useToast } from "@/components/ui/toast";
 
 export default function PipelinePage() {
   const s = useStore();
+  const toast = useToast();
   const [dragging, setDragging] = React.useState<string | null>(null);
   const [over, setOver] = React.useState<Stage | null>(null);
   const [won, setWon] = React.useState<string | null>(null);
+  const [showNew, setShowNew] = React.useState(false);
 
   const aperte = s.leads.filter((l) => !["vinto", "perso"].includes(l.stage));
   const valore = aperte.reduce((a, l) => a + l.value, 0);
@@ -36,7 +39,7 @@ export default function PipelinePage() {
       <PageHead
         title="Pipeline"
         sub="Trascina una scheda per cambiare fase. Ogni passaggio aggiorna previsioni e follow-up."
-        actions={<button className="btn btn-primary">+ Nuova trattativa</button>}
+        actions={<button className="btn btn-primary" onClick={() => setShowNew(true)}>+ Nuova trattativa</button>}
       />
 
       <div className="grid grid-cols-4 gap-4 mb-5">
@@ -141,6 +144,7 @@ export default function PipelinePage() {
         </div>
       )}
 
+      {/* Modal conversione lead → cliente */}
       <Modal
         open={!!won}
         onClose={() => setWon(null)}
@@ -164,6 +168,9 @@ export default function PipelinePage() {
           </div>
         </div>
       </Modal>
+
+      {/* Modal nuova trattativa */}
+      <NewLeadModal open={showNew} onClose={() => setShowNew(false)} />
     </div>
   );
 }
@@ -171,4 +178,95 @@ export default function PipelinePage() {
 /** Probabilità di chiusura associata alla fase. */
 function weight(stage: Stage) {
   return { lead: 0.1, contatto: 0.25, proposta: 0.5, negoziazione: 0.75, vinto: 1, perso: 0 }[stage];
+}
+
+/* ── Form nuova trattativa ── */
+function NewLeadModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const s = useStore();
+  const toast = useToast();
+  const [company, setCompany] = React.useState("");
+  const [contact, setContact] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [value, setValue] = React.useState("");
+  const [stage, setStage] = React.useState<Stage>("lead");
+  const [note, setNote] = React.useState("");
+  const [owner, setOwner] = React.useState("Daniele");
+
+  const reset = () => {
+    setCompany(""); setContact(""); setEmail(""); setValue(""); setStage("lead"); setNote(""); setOwner("Daniele");
+  };
+
+  const submit = () => {
+    if (!company.trim()) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const followUp = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
+    s.addLead({
+      company: company.trim(),
+      contactName: contact.trim() || "—",
+      contactEmail: email.trim(),
+      value: Number(value) || 0,
+      stage,
+      owner,
+      source: "diretto",
+      firstTouch: today,
+      lastTouch: today,
+      nextFollowUp: followUp,
+      note: note.trim(),
+    });
+    toast(`Trattativa "${company.trim()}" aggiunta in pipeline`, "brand");
+    reset();
+    onClose();
+  };
+
+  return (
+    <Modal open={open} onClose={() => { reset(); onClose(); }} title="Nuova trattativa" sub="Aggiungi un prospect alla pipeline commerciale" width={520}>
+      <div className="card-pad space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="lbl">Azienda *</label>
+            <input className="field" placeholder="Nome azienda" value={company} onChange={(e) => setCompany(e.target.value)} />
+          </div>
+          <div>
+            <label className="lbl">Referente</label>
+            <input className="field" placeholder="Nome e cognome" value={contact} onChange={(e) => setContact(e.target.value)} />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="lbl">Email</label>
+            <input className="field" type="email" placeholder="email@azienda.it" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <div>
+            <label className="lbl">Valore stimato</label>
+            <input className="field" type="number" placeholder="0" min="0" step="500" value={value} onChange={(e) => setValue(e.target.value)} />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="lbl">Fase iniziale</label>
+            <select className="field" value={stage} onChange={(e) => setStage(e.target.value as Stage)}>
+              {STAGES.filter((st) => !["vinto", "perso"].includes(st.key)).map((st) => (
+                <option key={st.key} value={st.key}>{st.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="lbl">Responsabile</label>
+            <select className="field" value={owner} onChange={(e) => setOwner(e.target.value)}>
+              <option>Daniele</option>
+              <option>Erika</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label className="lbl">Note</label>
+          <textarea className="field" rows={2} placeholder="Contesto, budget dichiarato, canale di acquisizione…" value={note} onChange={(e) => setNote(e.target.value)} />
+        </div>
+        <div className="flex justify-end gap-2 pt-1">
+          <button className="btn btn-ghost" onClick={() => { reset(); onClose(); }}>Annulla</button>
+          <button className="btn btn-brand" disabled={!company.trim()} onClick={submit}>Aggiungi trattativa</button>
+        </div>
+      </div>
+    </Modal>
+  );
 }

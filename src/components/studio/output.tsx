@@ -8,11 +8,13 @@ export function useStream() {
   const [text, setText] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [done, setDone] = React.useState(false);
 
   const run = React.useCallback(async (endpoint: string, payload: unknown) => {
     setLoading(true);
     setError(null);
     setText("");
+    setDone(false);
     try {
       const res = await fetch(endpoint, {
         method: "POST",
@@ -24,10 +26,11 @@ export function useStream() {
       if (!reader) throw new Error("Risposta vuota dal server");
       const dec = new TextDecoder();
       for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        const { value, done: d } = await reader.read();
+        if (d) break;
         setText((t) => t + dec.decode(value, { stream: true }));
       }
+      setDone(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Errore di rete");
     } finally {
@@ -35,20 +38,29 @@ export function useStream() {
     }
   }, []);
 
-  return { text, loading, error, run, reset: () => setText("") };
+  return { text, loading, error, done, run, reset: () => { setText(""); setDone(false); } };
 }
 
 export function Output({
-  text, loading, error, empty, filename,
+  text, loading, error, empty, filename, done,
 }: {
-  text: string; loading: boolean; error?: string | null; empty: string; filename: string;
+  text: string; loading: boolean; error?: string | null; empty: string; filename: string; done?: boolean;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [copied, setCopied] = React.useState(false);
+  const [showDone, setShowDone] = React.useState(false);
 
   React.useEffect(() => {
     if (loading && ref.current) ref.current.scrollTop = ref.current.scrollHeight;
   }, [text, loading]);
+
+  React.useEffect(() => {
+    if (done && !loading && text) {
+      setShowDone(true);
+      const t = setTimeout(() => setShowDone(false), 2500);
+      return () => clearTimeout(t);
+    }
+  }, [done, loading, text]);
 
   const copy = async () => {
     try {
@@ -70,9 +82,19 @@ export function Output({
   return (
     <section className="card overflow-hidden flex flex-col" style={{ minHeight: 520 }}>
       <div className="card-head">
-        <h2 className="t-sec">
+        <h2 className="t-sec flex items-center gap-2">
           Documento
-          {loading && <span className="ml-2 t-meta pulsing">generazione in corso…</span>}
+          {loading && (
+            <span className="inline-flex items-center gap-2 ml-2">
+              <span className="ai-pulse" />
+              <span className="text-[11.5px] font-normal" style={{ color: "var(--brand)" }}>Claude sta scrivendo…</span>
+            </span>
+          )}
+          {showDone && !loading && (
+            <span className="text-[11.5px] font-medium done-flash" style={{ color: "var(--ok)" }}>
+              ✓ Documento completato
+            </span>
+          )}
         </h2>
         {text && !loading && (
           <div className="flex gap-2">

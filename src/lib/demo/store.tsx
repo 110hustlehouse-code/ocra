@@ -33,6 +33,7 @@ type State = {
 
 type Ctx = State & {
   addClient: (c: Omit<Client, "id">, opts: { createProject: boolean; projectName?: string; budget?: number }) => Client;
+  addLead: (l: Omit<Lead, "id">) => Lead;
   moveLead: (id: string, stage: Stage) => void;
   convertLead: (id: string) => void;
   markPaid: (id: string) => void;
@@ -101,6 +102,15 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
         return { ...s, clients: [client, ...s.clients], projects };
       });
       return client;
+    },
+
+    addLead(data) {
+      const lead: Lead = {
+        ...data,
+        id: "l" + Math.random().toString(36).slice(2, 8),
+      };
+      setState((s) => ({ ...s, leads: [lead, ...s.leads] }));
+      return lead;
     },
 
     moveLead(id, stage) {

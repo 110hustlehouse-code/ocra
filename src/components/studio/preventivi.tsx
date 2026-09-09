@@ -5,16 +5,18 @@ import { useStore } from "@/lib/demo/store";
 import { services, eur } from "@/lib/demo/data";
 import { Panel, Badge } from "@/components/ui/kit";
 import { useStream, Output } from "./output";
+import { useToast } from "@/components/ui/toast";
 
 const CATEGORIES = ["Business Development", "Creative Development", "Marketing Development"] as const;
 
 export function PreventiviTab() {
   const s = useStore();
+  const toast = useToast();
   const [client, setClient] = React.useState("");
   const [sel, setSel] = React.useState<string[]>([]);
   const [notes, setNotes] = React.useState("");
   const [discount, setDiscount] = React.useState(0);
-  const { text, loading, error, run } = useStream();
+  const { text, loading, error, done, run } = useStream();
 
   const chosen = services.filter((x) => sel.includes(x.id));
   const subtotal = chosen.reduce((a, x) => a + x.price, 0);
@@ -23,6 +25,28 @@ export function PreventiviTab() {
 
   const toggle = (id: string) =>
     setSel((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
+
+  const exportPdf = () => {
+    if (!text) return;
+    const w = window.open("", "_blank");
+    if (!w) { toast("Sblocca i popup per scaricare il PDF", "warn"); return; }
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Preventivo ${client || "OCRA"}</title>
+    <style>
+      body { font-family: -apple-system, system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; color: #16171a; font-size: 14px; line-height: 1.7; }
+      h1 { font-size: 22px; margin-bottom: 4px; }
+      .meta { color: #8a8c93; font-size: 12px; margin-bottom: 32px; }
+      .brand { color: #e85d24; }
+      pre { white-space: pre-wrap; font-family: inherit; }
+      @media print { body { margin: 20px; } }
+    </style></head><body>
+    <h1 class="brand">OCRA &mdash; Preventivo</h1>
+    <div class="meta">Fulcro Lucem &middot; ${client || "Cliente"} &middot; ${new Date().toLocaleDateString("it-IT")}</div>
+    <pre>${text.replace(/</g, "&lt;")}</pre>
+    <script>setTimeout(()=>{window.print()},400)<\/script>
+    </body></html>`);
+    w.document.close();
+    toast("PDF in preparazione — usa Salva come PDF nella finestra di stampa");
+  };
 
   return (
     <div className="grid grid-cols-[400px_1fr] gap-5 items-start">
@@ -137,7 +161,15 @@ export function PreventiviTab() {
         </div>
       </div>
 
-      <Output text={text} loading={loading} error={error} empty="Nessun preventivo generato" filename={`preventivo-${client || "cliente"}.txt`} />
+      <div className="space-y-4">
+        <Output text={text} loading={loading} error={error} done={done} empty="Nessun preventivo generato" filename={`preventivo-${client || "cliente"}.txt`} />
+        {text && !loading && (
+          <div className="flex gap-2 justify-end">
+            <button className="btn btn-ghost" onClick={exportPdf}>Esporta PDF</button>
+            <button className="btn btn-ghost" onClick={() => toast("Preventivo inviato a " + (client || "cliente"), "brand")}>Invia al cliente</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

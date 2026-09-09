@@ -147,6 +147,21 @@ label.lbl { display: block; font-size: 11.5px; font-weight: 500; color: var(--te
   content: "▌"; color: var(--brand); animation: shimmer .9s steps(2) infinite;
 }
 
-/* Toast */
+/* ── Toast ── */
 @keyframes toastIn { from { opacity: 0; transform: translateX(20px) scale(.95); } to { opacity: 1; transform: none; } }
 .toast-enter { animation: toastIn .25s ease both; }
+
+/* ── AI pulse indicator ── */
+.ai-pulse {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--brand);
+  animation: aiPulse 1.2s ease-in-out infinite;
+}
+@keyframes aiPulse {
+  0%, 100% { opacity: .4; transform: scale(.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ── Done flash ── */
+@keyframes doneFlash { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.done-flash { animation: doneFlash .3s ease both; }
