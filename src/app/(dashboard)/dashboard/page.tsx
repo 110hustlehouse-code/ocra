@@ -44,7 +44,7 @@ export default function DashboardPage() {
     <div className="rise">
       <PageHead
         title={`Buongiorno, Daniele`}
-        sub={`${oggi.charAt(0).toUpperCase() + oggi.slice(1)} · ${alerts.filter((a) => a.severity === "danger").length} cose richiedono attenzione`}
+        sub={`${oggi.charAt(0).toUpperCase() + oggi.slice(1)} · ${alerts.length} cose richiedono attenzione`}
         actions={
           <>
             <Link href="/studio" className="btn btn-ghost">AI Studio</Link>

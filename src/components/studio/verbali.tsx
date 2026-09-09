@@ -5,9 +5,11 @@ import { useStore } from "@/lib/demo/store";
 import { dateIt, dayMonth } from "@/lib/demo/data";
 import { Badge, Panel, Empty, Avatar } from "@/components/ui/kit";
 import { useStream, Output } from "./output";
+import { useToast } from "@/components/ui/toast";
 
 export function VerbaliTab() {
   const s = useStore();
+  const toast = useToast();
   const [sel, setSel] = React.useState(s.meetings.find((m) => m.status === "trascritto")?.id ?? s.meetings[0]?.id);
   const [manual, setManual] = React.useState(false);
   const [raw, setRaw] = React.useState("");
@@ -27,7 +29,6 @@ export function VerbaliTab() {
 
   return (
     <div className="grid grid-cols-[290px_1fr] gap-5 items-start">
-      {/* Elenco riunioni */}
       <div className="space-y-4">
         <Panel
           title="Riunioni"
@@ -65,10 +66,7 @@ export function VerbaliTab() {
           </div>
         </Panel>
 
-        <button
-          className="btn btn-ghost w-full"
-          onClick={() => { setManual(true); }}
-        >
+        <button className="btn btn-ghost w-full" onClick={() => { setManual(true); }}>
           Incolla una trascrizione
         </button>
 
@@ -82,7 +80,6 @@ export function VerbaliTab() {
         </div>
       </div>
 
-      {/* Dettaglio */}
       <div className="space-y-4">
         {manual ? (
           <>
@@ -158,9 +155,9 @@ export function VerbaliTab() {
                       </div>
                     )}
                     <div className="flex gap-2 pt-1">
-                      <button className="btn btn-ghost btn-sm">Invia ai partecipanti</button>
-                      <button className="btn btn-ghost btn-sm">Crea task su Trello</button>
-                      <button className="btn btn-ghost btn-sm">Salva su Drive</button>
+                      <button className="btn btn-ghost btn-sm" onClick={() => toast(`Email inviata a ${m.participants.length} partecipanti`)}>Invia ai partecipanti</button>
+                      <button className="btn btn-ghost btn-sm" onClick={() => toast(`Card creata su Trello con ${m.actions?.filter(a => !a.done).length ?? 0} azioni`)}>Crea task su Trello</button>
+                      <button className="btn btn-ghost btn-sm" onClick={() => toast("Verbale salvato su Google Drive")}>Salva su Drive</button>
                     </div>
                   </div>
                 ) : m.transcription ? (
