@@ -361,10 +361,10 @@ export const STAGES: { key: Stage; label: string }[] = [
   { key: "vinto", label: "Vinto" },
 ];
 
-export const eur = (n: number) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " €";
+export const eur = (n: number) => { const s = Math.round(n).toString(); let r = ''; for (let i = s.length - 1, c = 0; i >= 0; i--, c++) { if (c > 0 && c % 3 === 0) r = '.' + r; r = s[i] + r; } return r + ' €'; };
 
 
-export const eur2 = (n: number) => n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".").replace(".", ",") + " €";
+export const eur2 = (n: number) => { const p = n.toFixed(2).split('.'); const s = p[0]; let r = ''; for (let i = s.length - 1, c = 0; i >= 0; i--, c++) { if (c > 0 && c % 3 === 0) r = '.' + r; r = s[i] + r; } return r + ',' + p[1] + ' €'; };
 
 
 export const dateIt = (d: string) => {const dt = new Date(d); const m = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic']; return dt.getDate().toString().padStart(2,'0') + ' ' + m[dt.getMonth()] + ' ' + dt.getFullYear();}; //
