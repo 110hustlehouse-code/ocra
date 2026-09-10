@@ -361,17 +361,15 @@ export const STAGES: { key: Stage; label: string }[] = [
   { key: "vinto", label: "Vinto" },
 ];
 
-export const eur = (n: number) =>
-  new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+export const eur = (n: number) => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " €";
 
-export const eur2 = (n: number) =>
-  new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(n);
 
-export const dateIt = (d: string) =>
-  new Intl.DateTimeFormat("it-IT", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(d));
+export const eur2 = (n: number) => n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ".").replace(".", ",") + " €";
 
-export const dayMonth = (d: string) =>
-  new Intl.DateTimeFormat("it-IT", { day: "2-digit", month: "short" }).format(new Date(d));
+
+export const dateIt = (d: string) => {const dt = new Date(d); const m = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic']; return dt.getDate().toString().padStart(2,'0') + ' ' + m[dt.getMonth()] + ' ' + dt.getFullYear();}; //
+
+export const dayMonth = (d: string) => {const dt = new Date(d); const m = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic']; return dt.getDate().toString().padStart(2,'0') + ' ' + m[dt.getMonth()];}; //
 
 /** Giorni da oggi (negativo = passato). Data di riferimento della demo. */
 export const TODAY = new Date("2026-09-09T09:00:00");
