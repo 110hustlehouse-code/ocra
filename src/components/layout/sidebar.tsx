@@ -8,6 +8,8 @@ const NAV = [
   { href: "/dashboard", label: "Dashboard", hint: "Oggi", icon: Grid },
   { href: "/clienti", label: "Clienti", hint: "Anagrafica e progetti", icon: Users },
   { href: "/pipeline", label: "Pipeline", hint: "Trattative", icon: Funnel },
+  { href: "/progetti", label: "Progetti", hint: "Avanzamento e scadenze", icon: Folder },
+  { href: "/contenuti", label: "Contenuti", hint: "Pipeline editoriale", icon: Calendar },
   { href: "/studio", label: "AI Studio", hint: "Verbali, preventivi, bandi", icon: Spark },
   { href: "/operativo", label: "Operativo", hint: "Contabilità e scadenze", icon: Ledger },
 ];
@@ -165,6 +167,22 @@ function Ledger({ active }: IP) {
     <svg {...S(active)}>
       <rect x="2.5" y="2" width="11" height="12" rx="1.6" />
       <path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3" />
+    </svg>
+  );
+}
+
+function Folder({ active }: IP) {
+  return (
+    <svg {...S(active)}>
+      <path d="M2 4.5c0-.8.7-1.5 1.5-1.5h3l1.5 1.5h5c.8 0 1.5.7 1.5 1.5v6c0 .8-.7 1.5-1.5 1.5h-10c-.8 0-1.5-.7-1.5-1.5z" />
+    </svg>
+  );
+}
+function Calendar({ active }: IP) {
+  return (
+    <svg {...S(active)}>
+      <rect x="2" y="3" width="12" height="11" rx="1.5" />
+      <path d="M2 6.5h12M5 1.5v3M11 1.5v3M5 9h2M9 9h2M5 11.5h2" />
     </svg>
   );
 }
