@@ -50,6 +50,7 @@ export function Sidebar() {
             <Link
               key={href}
               href={href}
+              data-guide={href.slice(1)}
               className="flex items-center gap-2.5 px-2.5 py-2 rounded-[9px] transition-colors group"
               style={{
                 background: active ? "var(--sidebar-hover)" : "transparent",
