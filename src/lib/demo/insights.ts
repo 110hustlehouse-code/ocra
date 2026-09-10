@@ -1,4 +1,4 @@
-import { daysFromToday, clientName, type Invoice, type Lead, type Project, type Meeting, type Bando } from "./data";
+import { daysFromToday, clientName, eur, type Invoice, type Lead, type Project, type Meeting, type Bando } from "./data";
 
 export type Alert = {
   id: string;
@@ -29,7 +29,7 @@ export function buildAlerts(d: {
       severity: "danger",
       area: "Contabilità",
       title: `${i.counterpart} — ${i.direction === "E" ? "insoluto" : "da pagare"} da ${late} giorni`,
-      detail: `${i.description} · €${i.amount.toLocaleString("it-IT")} + IVA · PO ${i.poCode}`,
+      detail: `${i.description} · ${eur(i.amount)} + IVA · PO ${i.poCode}`,
       href: "/operativo",
       cta: i.direction === "E" ? "Sollecita" : "Paga",
     });
@@ -48,7 +48,7 @@ export function buildAlerts(d: {
         gap < 0
           ? `Follow-up saltato: ${l.company} (${-gap}g)`
           : `Follow-up oggi: ${l.company}`,
-      detail: `${l.contactName} · €${l.value.toLocaleString("it-IT")} · ${l.note}`,
+      detail: `${l.contactName} · ${eur(l.value)} · ${l.note}`,
       href: "/pipeline",
       cta: "Apri trattativa",
     });
