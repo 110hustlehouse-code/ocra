@@ -387,3 +387,36 @@ export function generatePoCode(
   const svc = service.replace(/\s+/g, "").substring(0, 6).toUpperCase();
   return `${acronym}/${svc}/${String(n).padStart(2, "0")}-${year}/${client.replace(/\s+/g, "").toUpperCase()}/${dir}`;
 }
+
+/* ── Compliance ── */
+export type ComplianceCheck = {
+  id: string;
+  clientId: string;
+  dpaFirmato: boolean;
+  registroTrattamenti: boolean;
+  subResponsabili: string[];
+  cessioneDirittiAgenzia: boolean;
+  cessioneDirittiCliente: boolean;
+  contrattoFirmato: boolean;
+  accontoRicevuto: boolean;
+  scadenzaRevisioneGdpr: string;
+};
+
+export const complianceChecks: ComplianceCheck[] = [
+  { id: "cc1", clientId: "c1", dpaFirmato: true, registroTrattamenti: true, subResponsabili: ["Luca Marchetti", "Marco Bellini"], cessioneDirittiAgenzia: true, cessioneDirittiCliente: true, contrattoFirmato: true, accontoRicevuto: true, scadenzaRevisioneGdpr: "2027-02-11" },
+  { id: "cc2", clientId: "c2", dpaFirmato: true, registroTrattamenti: false, subResponsabili: [], cessioneDirittiAgenzia: true, cessioneDirittiCliente: false, contrattoFirmato: true, accontoRicevuto: true, scadenzaRevisioneGdpr: "2027-06-03" },
+  { id: "cc3", clientId: "c3", dpaFirmato: false, registroTrattamenti: false, subResponsabili: [], cessioneDirittiAgenzia: false, cessioneDirittiCliente: false, contrattoFirmato: true, accontoRicevuto: false, scadenzaRevisioneGdpr: "" },
+  { id: "cc4", clientId: "c4", dpaFirmato: true, registroTrattamenti: true, subResponsabili: ["Andrea Ferro"], cessioneDirittiAgenzia: true, cessioneDirittiCliente: true, contrattoFirmato: true, accontoRicevuto: true, scadenzaRevisioneGdpr: "2027-01-18" },
+  { id: "cc5", clientId: "c5", dpaFirmato: false, registroTrattamenti: false, subResponsabili: [], cessioneDirittiAgenzia: false, cessioneDirittiCliente: false, contrattoFirmato: false, accontoRicevuto: false, scadenzaRevisioneGdpr: "" },
+];
+
+export function calcRitenuta(compenso: number, under35: boolean, tipo: "occasionale" | "cessione_diritti"): { baseImponibile: number; ritenuta: number; netto: number } {
+  if (tipo === "cessione_diritti") {
+    const deduzione = under35 ? 0.40 : 0.25;
+    const base = compenso * (1 - deduzione);
+    const ritenuta = base * 0.20;
+    return { baseImponibile: base, ritenuta, netto: compenso - ritenuta };
+  }
+  const ritenuta = compenso * 0.20;
+  return { baseImponibile: compenso, ritenuta, netto: compenso - ritenuta };
+}

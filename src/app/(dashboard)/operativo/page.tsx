@@ -5,6 +5,7 @@ import { useStore } from "@/lib/demo/store";
 import { eur, eur2, dayMonth, dateIt, daysFromToday, TODAY, generatePoCode, services } from "@/lib/demo/data";
 import { Badge, Panel, PageHead, Empty } from "@/components/ui/kit";
 import { useToast } from "@/components/ui/toast";
+import { RitenutaCalc } from "@/components/compliance/compliance-panel";
 
 type Filter = "tutte" | "entrate" | "uscite" | "scadute";
 

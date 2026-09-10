@@ -6,8 +6,10 @@ import { useParams } from "next/navigation";
 import { useStore } from "@/lib/demo/store";
 import { eur, eur2, dateIt, dayMonth, daysFromToday } from "@/lib/demo/data";
 import { Badge, Panel, PageHead, Avatar, Progress, KV, Empty } from "@/components/ui/kit";
+import { CompliancePanel } from "@/components/compliance/compliance-panel";
+import { complianceChecks } from "@/lib/demo/data";
 
-const TABS = ["Panoramica", "Progetti", "Contenuti", "Contabilità", "Riunioni"] as const;
+const TABS = ["Panoramica", "Progetti", "Contenuti", "Contabilità", "Riunioni", "Compliance"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function ClienteDetail() {
@@ -243,6 +245,10 @@ export default function ClienteDetail() {
             </Panel>
           ))}
         </div>
+      )}
+
+      {tab === "Compliance" && (
+        <CompliancePanel check={complianceChecks.find((cc) => cc.clientId === c.id) || { id: "", clientId: c.id, dpaFirmato: false, registroTrattamenti: false, subResponsabili: [], cessioneDirittiAgenzia: false, cessioneDirittiCliente: false, contrattoFirmato: false, accontoRicevuto: false, scadenzaRevisioneGdpr: "" }} />
       )}
     </div>
   );
