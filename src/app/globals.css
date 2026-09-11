@@ -284,3 +284,76 @@ body {
 .tbl tr:last-child td { border-bottom: none; }
 .tbl tr:hover td { background: var(--surface-2); }
 .scroll-x { overflow-x: auto; }
+
+/* ── Tour ── */
+.tour-overlay-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  cursor: default;
+  background: rgba(15, 16, 18, 0.72);
+  animation: tourBgIn .4s ease both;
+}
+@keyframes tourBgIn { from { opacity: 0 } to { opacity: 1 } }
+
+.tour-spotlight {
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  border-radius: 14px;
+  box-shadow:
+    0 0 0 3px rgba(232, 93, 36, 0.35),
+    0 0 24px 4px rgba(232, 93, 36, 0.10),
+    0 0 0 9999px rgba(15, 16, 18, 0.72);
+  transition: left .45s cubic-bezier(.4,0,.2,1),
+              top .45s cubic-bezier(.4,0,.2,1),
+              width .45s cubic-bezier(.4,0,.2,1),
+              height .45s cubic-bezier(.4,0,.2,1);
+}
+
+.tour-tooltip {
+  position: fixed;
+  z-index: 10001;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 12px 48px rgba(15, 16, 18, 0.22), 0 2px 8px rgba(15, 16, 18, 0.08);
+  animation: tourCardIn .35s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes tourCardIn {
+  from { opacity: 0; transform: translateY(8px) scale(.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+.tour-dots { display: flex; align-items: center; gap: 4px; }
+.tour-dot {
+  height: 6px; border-radius: 99px;
+  transition: width .35s ease, background .35s ease;
+}
+
+.tour-title {
+  font-size: 18px; font-weight: 600;
+  letter-spacing: -0.025em; line-height: 1.25;
+}
+.tour-body {
+  font-size: 13.5px; line-height: 1.65;
+  color: var(--text-2); margin-top: 6px;
+}
+
+@keyframes confettiFall {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) translateX(var(--drift, 0px)) rotate(780deg); opacity: 0; }
+}
+.tour-confetti { animation: confettiFall ease-out forwards; }
+
+/* ── Responsive: nasconde colonne secondarie sotto la soglia XL (1280px) ── */
+@media (max-width: 1279px) {
+  .hide-lg { display: none; }
+  .tbl-compact th, .tbl-compact td { padding-left: 10px; padding-right: 10px; }
+}

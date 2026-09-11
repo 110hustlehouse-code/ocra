@@ -118,11 +118,20 @@ const STEPS: Step[] = [
   },
   { page: "/studio", target: "studio-mode", section: "AI Studio", title: "Due modalità", body: "Uso interno per il team, oppure servizi AI da vendere ai clienti — cambia vista con un click." },
   { page: "/studio", target: "studio-tabs", section: "AI Studio", title: "Quattro strumenti interni", body: "Verbali automatici dalle riunioni, preventivi generati dai servizi, analisi di pertinenza sui bandi, e scrittura assistita delle proposte progettuali." },
-  { page: "/studio", target: "studio-riunioni", section: "AI Studio", title: "Riunioni collegate a Fireflies", body: "L'elenco delle riunioni con lo stato di ciascuna: pronte, da elaborare o ancora in corso. Selezionane una per vedere trascrizione e verbale." },
-  { page: "/studio", target: "studio-come-funziona", section: "AI Studio", title: "Come funziona", body: "Fireflies entra da solo in ogni riunione su Meet: nessuno deve avviare o fermare niente. A riunione finita, trascrizione e verbale sono già pronti qui." },
-  { page: "/studio", target: "studio-riunione-dettaglio", section: "AI Studio", title: "Trascrizione e verbale", body: "Il dettaglio della riunione selezionata: trascrizione grezza pronta per generare il verbale, oppure — se già elaborato — sintesi, decisioni e azioni assegnate." },
 
   // ── Operativo ──
+  {
+    page: "/operativo", section: "Operativo",
+    title: "Contabilità che gira da sola",
+    body: "Scadenziario, codici PO, previsione di cassa e solleciti automatici.",
+    features: [
+      "Scadenziario con filtri: entrate, uscite, scadute",
+      "Generatore codici PO nel formato standard dell'agenzia",
+      "Previsione di cassa a 8 settimane",
+      "Solleciti automatici per fatture scadute",
+      "Gestione collaboratori e documenti fiscali",
+    ],
+  },
   { page: "/operativo", target: "operativo-kpi", section: "Operativo", title: "I numeri di cassa", body: "Incassato, da incassare, da pagare e scaduto — la situazione finanziaria delle tre società in tempo reale." },
   { page: "/operativo", target: "operativo-scadenziario", section: "Operativo", title: "Scadenziario", body: "Tutte le fatture attive e passive, filtrabili per direzione e stato. Segna come incassata o pagata con un click." },
   { page: "/operativo", target: "operativo-cashflow", section: "Operativo", title: "Previsione di cassa", body: "Entrate attese e uscite previste nelle prossime 8 settimane, con il saldo netto proiettato." },

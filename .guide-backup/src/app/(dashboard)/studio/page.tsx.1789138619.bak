@@ -33,7 +33,7 @@ export default function StudioPage() {
       />
 
       {/* Toggle Interno / Servizi */}
-      <div className="flex gap-1 p-1 rounded-[10px] mb-6 w-fit" data-guide="studio-mode" style={{ background: "var(--surface-2, #f5f5f3)" }}>
+      <div className="flex gap-1 p-1 rounded-[10px] mb-6 w-fit" style={{ background: "var(--surface-2, #f5f5f3)" }}>
         <button
           onClick={() => setMode("interno")}
           className="px-4 py-1.5 rounded-[8px] text-[12.5px] font-medium transition-all"
@@ -60,7 +60,7 @@ export default function StudioPage() {
 
       {mode === "interno" ? (
         <>
-          <div className="grid grid-cols-4 gap-2.5 mb-6" data-guide="studio-tabs">
+          <div className="grid grid-cols-4 gap-2.5 mb-6">
             {INTERNAL_TABS.map((t) => {
               const on = tab === t.key;
               return (

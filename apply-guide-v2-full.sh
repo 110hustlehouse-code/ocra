@@ -1,3 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
+
+echo "=== OCRA Guide v2 — tour completo su tutte le 7 pagine ==="
+echo ""
+
+mkdir -p .guide-backup
+TS=$(date +%s)
+for f in \
+  "src/components/ui/guide.tsx" \
+  "src/app/(dashboard)/clienti/page.tsx" \
+  "src/app/(dashboard)/pipeline/page.tsx" \
+  "src/app/(dashboard)/progetti/page.tsx" \
+  "src/app/(dashboard)/contenuti/page.tsx" \
+  "src/app/(dashboard)/studio/page.tsx" \
+  "src/app/(dashboard)/operativo/page.tsx"
+do
+  if [ -f "$f" ]; then
+    mkdir -p ".guide-backup/$(dirname "$f")"
+    cp "$f" ".guide-backup/$f.$TS.bak"
+  fi
+done
+echo "[0/7] Backup salvato in .guide-backup/"
+
+# ══════════════════════════════════════════════════════════════
+# 1 — guide.tsx: 33 step totali, spotlight su tutte le 7 pagine
+# ══════════════════════════════════════════════════════════════
+echo "[1/7] Riscrivo guide.tsx (33 step, robustezza su target condizionali)..."
+
+cat > src/components/ui/guide.tsx << 'ENDOFGUIDE'
 "use client";
 
 import * as React from "react";
@@ -118,11 +149,20 @@ const STEPS: Step[] = [
   },
   { page: "/studio", target: "studio-mode", section: "AI Studio", title: "Due modalità", body: "Uso interno per il team, oppure servizi AI da vendere ai clienti — cambia vista con un click." },
   { page: "/studio", target: "studio-tabs", section: "AI Studio", title: "Quattro strumenti interni", body: "Verbali automatici dalle riunioni, preventivi generati dai servizi, analisi di pertinenza sui bandi, e scrittura assistita delle proposte progettuali." },
-  { page: "/studio", target: "studio-riunioni", section: "AI Studio", title: "Riunioni collegate a Fireflies", body: "L'elenco delle riunioni con lo stato di ciascuna: pronte, da elaborare o ancora in corso. Selezionane una per vedere trascrizione e verbale." },
-  { page: "/studio", target: "studio-come-funziona", section: "AI Studio", title: "Come funziona", body: "Fireflies entra da solo in ogni riunione su Meet: nessuno deve avviare o fermare niente. A riunione finita, trascrizione e verbale sono già pronti qui." },
-  { page: "/studio", target: "studio-riunione-dettaglio", section: "AI Studio", title: "Trascrizione e verbale", body: "Il dettaglio della riunione selezionata: trascrizione grezza pronta per generare il verbale, oppure — se già elaborato — sintesi, decisioni e azioni assegnate." },
 
   // ── Operativo ──
+  {
+    page: "/operativo", section: "Operativo",
+    title: "Contabilità che gira da sola",
+    body: "Scadenziario, codici PO, previsione di cassa e solleciti automatici.",
+    features: [
+      "Scadenziario con filtri: entrate, uscite, scadute",
+      "Generatore codici PO nel formato standard dell'agenzia",
+      "Previsione di cassa a 8 settimane",
+      "Solleciti automatici per fatture scadute",
+      "Gestione collaboratori e documenti fiscali",
+    ],
+  },
   { page: "/operativo", target: "operativo-kpi", section: "Operativo", title: "I numeri di cassa", body: "Incassato, da incassare, da pagare e scaduto — la situazione finanziaria delle tre società in tempo reale." },
   { page: "/operativo", target: "operativo-scadenziario", section: "Operativo", title: "Scadenziario", body: "Tutte le fatture attive e passive, filtrabili per direzione e stato. Segna come incassata o pagata con un click." },
   { page: "/operativo", target: "operativo-cashflow", section: "Operativo", title: "Previsione di cassa", body: "Entrate attese e uscite previste nelle prossime 8 settimane, con il saldo netto proiettato." },
@@ -406,3 +446,274 @@ export function GuideButton() {
     </button>
   );
 }
+ENDOFGUIDE
+
+echo "    ✓ guide.tsx (33 step su 7 pagine, target condizionali gestiti in sicurezza)"
+
+# ══════════════════════════════════════════════════════════════
+# 2 — clienti/page.tsx
+# ══════════════════════════════════════════════════════════════
+echo "[2/7] Aggiorno clienti/page.tsx..."
+
+python3 << 'ENDPY'
+path = "src/app/(dashboard)/clienti/page.tsx"
+with open(path) as f:
+    c = f.read()
+
+n = 0
+
+old = '      <div className="grid grid-cols-4 gap-4 mb-5">\n        {[\n          ["Clienti attivi"'
+new = '      <div className="grid grid-cols-4 gap-4 mb-5" data-guide="clienti-kpi">\n        {[\n          ["Clienti attivi"'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + clienti-kpi")
+
+old = '<button className="btn btn-primary" onClick={() => setOpen(true)}>+ Nuovo cliente</button>'
+new = '<button className="btn btn-primary" data-guide="clienti-nuovo" onClick={() => setOpen(true)}>+ Nuovo cliente</button>'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + clienti-nuovo")
+
+old = '''      <Panel title={`Portafoglio (${list.length})`}>'''
+new = '''      <div data-guide="clienti-portfolio">
+      <Panel title={`Portafoglio (${list.length})`}>'''
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + clienti-portfolio (apertura wrapper)")
+
+old = '''        </div>
+      </Panel>
+
+      <OnboardingModal'''
+new = '''        </div>
+      </Panel>
+      </div>
+
+      <OnboardingModal'''
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + clienti-portfolio (chiusura wrapper)")
+
+with open(path, "w") as f:
+    f.write(c)
+print(f"    ✓ clienti/page.tsx ({n}/4 modifiche)")
+ENDPY
+
+# ══════════════════════════════════════════════════════════════
+# 3 — pipeline/page.tsx
+# ══════════════════════════════════════════════════════════════
+echo "[3/7] Aggiorno pipeline/page.tsx..."
+
+python3 << 'ENDPY'
+path = "src/app/(dashboard)/pipeline/page.tsx"
+with open(path) as f:
+    c = f.read()
+
+n = 0
+
+old = '      <div className="grid grid-cols-4 gap-4 mb-5">\n        {[\n          ["Valore in pipeline"'
+new = '      <div className="grid grid-cols-4 gap-4 mb-5" data-guide="pipeline-kpi">\n        {[\n          ["Valore in pipeline"'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + pipeline-kpi")
+
+old = '      <div className="grid gap-3.5" style={{ gridTemplateColumns: `repeat(${STAGES.length}, minmax(0,1fr))` }}>'
+new = '      <div className="grid gap-3.5" data-guide="pipeline-board" style={{ gridTemplateColumns: `repeat(${STAGES.length}, minmax(0,1fr))` }}>'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + pipeline-board")
+
+old = '''      {persi.length > 0 && (
+        <div className="mt-5">'''
+new = '''      {persi.length > 0 && (
+        <div className="mt-5" data-guide="pipeline-perse">'''
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + pipeline-perse")
+
+with open(path, "w") as f:
+    f.write(c)
+print(f"    ✓ pipeline/page.tsx ({n}/3 modifiche)")
+ENDPY
+
+# ══════════════════════════════════════════════════════════════
+# 4 — progetti/page.tsx
+# ══════════════════════════════════════════════════════════════
+echo "[4/7] Aggiorno progetti/page.tsx..."
+
+python3 << 'ENDPY'
+path = "src/app/(dashboard)/progetti/page.tsx"
+with open(path) as f:
+    c = f.read()
+
+n = 0
+
+old = '      <div className="grid grid-cols-4 gap-4 mb-5">\n        <div className="card card-pad">\n          <div className="t-label mb-1">Progetti attivi</div>'
+new = '      <div className="grid grid-cols-4 gap-4 mb-5" data-guide="progetti-kpi">\n        <div className="card card-pad">\n          <div className="t-label mb-1">Progetti attivi</div>'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + progetti-kpi")
+
+old = '      <div className="flex gap-2 mb-4">'
+new = '      <div className="flex gap-2 mb-4" data-guide="progetti-filtri">'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + progetti-filtri")
+
+old = '''        <Panel title="Progetti" action={<span className="t-meta">{filtered.length} risultati</span>}>'''
+new = '''        <div data-guide="progetti-lista">
+        <Panel title="Progetti" action={<span className="t-meta">{filtered.length} risultati</span>}>'''
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + progetti-lista (apertura wrapper)")
+
+old = '''          </div>
+        </Panel>
+
+        <div className="space-y-4">'''
+new = '''          </div>
+        </Panel>
+        </div>
+
+        <div className="space-y-4" data-guide="progetti-dettaglio">'''
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + progetti-lista (chiusura wrapper) + progetti-dettaglio")
+
+with open(path, "w") as f:
+    f.write(c)
+print(f"    ✓ progetti/page.tsx ({n}/4 modifiche)")
+ENDPY
+
+# ══════════════════════════════════════════════════════════════
+# 5 — contenuti/page.tsx
+# ══════════════════════════════════════════════════════════════
+echo "[5/7] Aggiorno contenuti/page.tsx..."
+
+python3 << 'ENDPY'
+path = "src/app/(dashboard)/contenuti/page.tsx"
+with open(path) as f:
+    c = f.read()
+
+n = 0
+
+old = '      <div className="grid grid-cols-4 gap-4 mb-5">\n        <div className="card card-pad">\n          <div className="t-label mb-1">In lavorazione</div>'
+new = '      <div className="grid grid-cols-4 gap-4 mb-5" data-guide="contenuti-kpi">\n        <div className="card card-pad">\n          <div className="t-label mb-1">In lavorazione</div>'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + contenuti-kpi")
+
+old = '        <div className="grid grid-cols-6 gap-3">'
+new = '        <div className="grid grid-cols-6 gap-3" data-guide="contenuti-board">'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + contenuti-board")
+
+with open(path, "w") as f:
+    f.write(c)
+print(f"    ✓ contenuti/page.tsx ({n}/2 modifiche)")
+ENDPY
+
+# ══════════════════════════════════════════════════════════════
+# 6 — studio/page.tsx
+# ══════════════════════════════════════════════════════════════
+echo "[6/7] Aggiorno studio/page.tsx..."
+
+python3 << 'ENDPY'
+path = "src/app/(dashboard)/studio/page.tsx"
+with open(path) as f:
+    c = f.read()
+
+n = 0
+
+old = '      <div className="flex gap-1 p-1 rounded-[10px] mb-6 w-fit" style={{ background: "var(--surface-2, #f5f5f3)" }}>'
+new = '      <div className="flex gap-1 p-1 rounded-[10px] mb-6 w-fit" data-guide="studio-mode" style={{ background: "var(--surface-2, #f5f5f3)" }}>'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + studio-mode")
+
+old = '          <div className="grid grid-cols-4 gap-2.5 mb-6">'
+new = '          <div className="grid grid-cols-4 gap-2.5 mb-6" data-guide="studio-tabs">'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + studio-tabs")
+
+with open(path, "w") as f:
+    f.write(c)
+print(f"    ✓ studio/page.tsx ({n}/2 modifiche)")
+ENDPY
+
+# ══════════════════════════════════════════════════════════════
+# 7 — operativo/page.tsx
+# ══════════════════════════════════════════════════════════════
+echo "[7/7] Aggiorno operativo/page.tsx..."
+
+python3 << 'ENDPY'
+path = "src/app/(dashboard)/operativo/page.tsx"
+with open(path) as f:
+    c = f.read()
+
+n = 0
+
+old = '      <div className="grid grid-cols-4 gap-4 mb-5">\n        {[\n          ["Incassato"'
+new = '      <div className="grid grid-cols-4 gap-4 mb-5" data-guide="operativo-kpi">\n        {[\n          ["Incassato"'
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + operativo-kpi")
+
+old = '''        <div className="space-y-5">
+          <Panel
+            title="Scadenziario"'''
+new = '''        <div className="space-y-5">
+          <div data-guide="operativo-scadenziario">
+          <Panel
+            title="Scadenziario"'''
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + operativo-scadenziario (apertura wrapper)")
+
+old = '''          </Panel>
+
+          <Cashflow invoices={s.invoices} />
+        </div>
+
+        <div className="space-y-5">
+          <Solleciti />
+          <PoGenerator />
+        </div>'''
+new = '''          </Panel>
+          </div>
+
+          <div data-guide="operativo-cashflow">
+          <Cashflow invoices={s.invoices} />
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          <div data-guide="operativo-solleciti">
+          <Solleciti />
+          </div>
+          <div data-guide="operativo-po">
+          <PoGenerator />
+          </div>
+        </div>'''
+if old in c:
+    c = c.replace(old, new, 1); n += 1
+    print("    + operativo-scadenziario (chiusura) + operativo-cashflow + operativo-solleciti + operativo-po")
+
+with open(path, "w") as f:
+    f.write(c)
+print(f"    ✓ operativo/page.tsx ({n}/3 blocchi modificati)")
+ENDPY
+
+echo ""
+echo "=== Fatto! ==="
+echo "Tour completo: 33 step su tutte le 7 pagine, con spotlight su ogni sezione reale."
+echo ""
+echo "  npm run dev"
+echo "  → verifica che il progetto compili senza errori (npx tsc --noEmit se vuoi essere sicuro)"
+echo "  → apri in incognito o sessionStorage.clear() per vedere il tour dall'inizio"
+echo ""
+echo "  git add -A"
+echo "  git commit -m 'feat: tour completo su tutte le pagine con spotlight sezione per sezione'"
+echo "  git push"

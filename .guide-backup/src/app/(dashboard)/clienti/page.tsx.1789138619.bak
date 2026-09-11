@@ -40,12 +40,12 @@ function ClientiInner() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
             />
-            <button className="btn btn-primary" data-guide="clienti-nuovo" onClick={() => setOpen(true)}>+ Nuovo cliente</button>
+            <button className="btn btn-primary" onClick={() => setOpen(true)}>+ Nuovo cliente</button>
           </>
         }
       />
 
-      <div className="grid grid-cols-4 gap-4 mb-5" data-guide="clienti-kpi">
+      <div className="grid grid-cols-4 gap-4 mb-5">
         {[
           ["Clienti attivi", s.clients.filter((c) => c.status === "active").length],
           ["In onboarding", s.clients.filter((c) => c.status === "onboarding").length],
@@ -59,7 +59,6 @@ function ClientiInner() {
         ))}
       </div>
 
-      <div data-guide="clienti-portfolio">
       <Panel title={`Portafoglio (${list.length})`}>
         <div className="scroll-x">
           <table className="tbl">
@@ -94,7 +93,6 @@ function ClientiInner() {
           </table>
         </div>
       </Panel>
-      </div>
 
       <OnboardingModal open={open} onClose={() => { setOpen(false); router.replace("/clienti"); }} />
     </div>

@@ -118,7 +118,6 @@ export function VerbaliTab() {
           <Panel><Empty title="Nessuna riunione selezionata" /></Panel>
         ) : (
           <>
-            <div data-guide="studio-riunione-dettaglio">
             <Panel
               title={m.title}
               action={
@@ -189,7 +188,6 @@ export function VerbaliTab() {
                 )}
               </div>
             </Panel>
-            </div>
 
             {(loading || text) && (
               <Output text={text} loading={loading} error={error} empty="" filename={`verbale-${m.id}.txt`} />

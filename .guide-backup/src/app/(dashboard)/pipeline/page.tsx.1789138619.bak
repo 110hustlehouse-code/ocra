@@ -42,7 +42,7 @@ export default function PipelinePage() {
         actions={<button className="btn btn-primary" onClick={() => setShowNew(true)}>+ Nuova trattativa</button>}
       />
 
-      <div className="grid grid-cols-4 gap-4 mb-5" data-guide="pipeline-kpi">
+      <div className="grid grid-cols-4 gap-4 mb-5">
         {[
           ["Valore in pipeline", eur(valore), `${aperte.length} trattative aperte`],
           ["Ponderato", eur(Math.round(aperte.reduce((a, l) => a + l.value * weight(l.stage), 0))), "per probabilità di fase"],
@@ -58,7 +58,7 @@ export default function PipelinePage() {
         ))}
       </div>
 
-      <div className="grid gap-3.5" data-guide="pipeline-board" style={{ gridTemplateColumns: `repeat(${STAGES.length}, minmax(0,1fr))` }}>
+      <div className="grid gap-3.5" style={{ gridTemplateColumns: `repeat(${STAGES.length}, minmax(0,1fr))` }}>
         {STAGES.map((st) => {
           const items = s.leads.filter((l) => l.stage === st.key);
           const tot = items.reduce((a, l) => a + l.value, 0);
@@ -124,7 +124,7 @@ export default function PipelinePage() {
       </div>
 
       {persi.length > 0 && (
-        <div className="mt-5" data-guide="pipeline-perse">
+        <div className="mt-5">
           <Panel title={`Perse (${persi.length})`}>
             <table className="tbl">
               <thead><tr><th>Azienda</th><th>Referente</th><th>Valore</th><th>Motivo</th><th>Ultimo contatto</th></tr></thead>
