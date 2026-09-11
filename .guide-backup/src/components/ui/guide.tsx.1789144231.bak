@@ -129,7 +129,6 @@ const STEPS: Step[] = [
   { page: "/operativo", target: "operativo-cashflow", section: "Operativo", title: "Previsione di cassa", body: "Entrate attese e uscite previste nelle prossime 8 settimane, con il saldo netto proiettato." },
   { page: "/operativo", target: "operativo-solleciti", section: "Operativo", title: "Solleciti automatici", body: "Il primo sollecito parte da solo a 7 giorni dalla scadenza, il secondo a 21 con il responsabile in copia." },
   { page: "/operativo", target: "operativo-po", section: "Operativo", title: "Generatore codice PO", body: "Genera il codice ordine nel formato standard dell'agenzia, pronto da copiare in un click." },
-  { page: "/operativo", target: "operativo-ritenuta", section: "Operativo", title: "Ritenuta d'acconto", body: "Calcolo automatico della ritenuta per i collaboratori: base imponibile, ritenuta al 20% e netto da pagare, con i riferimenti normativi. Basta aprire la tendina." },
 
   // ── Reporting ──
   {

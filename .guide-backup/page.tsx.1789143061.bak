@@ -179,31 +179,6 @@ export default function DashboardPage() {
               })}
             </div>
           </div>
-
-          <div className="card overflow-hidden" data-guide="marketing-reporting-widget">
-            <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: "1px solid var(--line-2)" }}>
-              <span className="text-[13px] font-semibold">Marketing & Reporting</span>
-              <Link href="/reporting" className="text-[11.5px] font-medium" style={{ color: "var(--brand)" }}>Dettaglio →</Link>
-            </div>
-            <div className="px-5 py-4 grid grid-cols-2 gap-3">
-              <div>
-                <div className="t-label">Reach 30gg</div>
-                <div className="text-[16px] font-semibold tabular mt-1">333.000</div>
-              </div>
-              <div>
-                <div className="t-label">Apertura email</div>
-                <div className="text-[16px] font-semibold tabular mt-1" style={{ color: "var(--ok)" }}>42,6%</div>
-              </div>
-              <div>
-                <div className="t-label">Campagne attive</div>
-                <div className="text-[16px] font-semibold tabular mt-1">3</div>
-              </div>
-              <div>
-                <div className="t-label">WhatsApp automatici</div>
-                <div className="text-[16px] font-semibold tabular mt-1">48</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

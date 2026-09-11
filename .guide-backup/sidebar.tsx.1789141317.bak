@@ -12,8 +12,6 @@ const NAV = [
   { href: "/contenuti", label: "Contenuti", hint: "Pipeline editoriale", icon: Calendar },
   { href: "/studio", label: "AI Studio", hint: "Verbali, preventivi, bandi", icon: Spark },
   { href: "/operativo", label: "Operativo", hint: "Contabilità e scadenze", icon: Ledger },
-  { href: "/reporting", label: "Reporting", hint: "Social, web, campagne", icon: Chart },
-  { href: "/marketing", label: "Marketing", hint: "Email e WhatsApp", icon: Mail },
 ];
 
 export function Sidebar() {
@@ -28,16 +26,18 @@ export function Sidebar() {
       <div className="px-4 pt-5 pb-4">
         <div className="flex items-center gap-2.5">
           <div
-            className="w-8 h-8 rounded-[8px] flex items-center justify-center shrink-0 overflow-hidden"
-            style={{ background: "#000" }}
+            className="w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0"
+            style={{ background: "var(--brand)" }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-fulcro.png" alt="Fulcro Lucem" className="w-full h-full object-contain p-1" />
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="6" stroke="#fff" strokeWidth="2" />
+              <path d="M8 2a6 6 0 0 1 6 6" stroke="var(--brand)" strokeWidth="2.4" strokeLinecap="round" />
+            </svg>
           </div>
           <div className="leading-tight">
-            <div className="text-[13px] font-semibold text-white tracking-tight">{TENANT.name}</div>
-            <div className="text-[10.5px] font-medium" style={{ color: "var(--sidebar-text)" }}>
-              OCRA
+            <div className="text-[13px] font-semibold text-white tracking-tight">OCRA</div>
+            <div className="text-[10.5px]" style={{ color: "var(--sidebar-text)" }}>
+              {TENANT.name}
             </div>
           </div>
         </div>
@@ -183,25 +183,6 @@ function Calendar({ active }: IP) {
     <svg {...S(active)}>
       <rect x="2" y="3" width="12" height="11" rx="1.5" />
       <path d="M2 6.5h12M5 1.5v3M11 1.5v3M5 9h2M9 9h2M5 11.5h2" />
-    </svg>
-  );
-}
-
-function Chart({ active }: IP) {
-  return (
-    <svg {...S(active)}>
-      <path d="M2 13.5h12" />
-      <rect x="3.5" y="8" width="2.4" height="5.5" rx="0.6" />
-      <rect x="6.8" y="4.5" width="2.4" height="9" rx="0.6" />
-      <rect x="10.1" y="6.5" width="2.4" height="7" rx="0.6" />
-    </svg>
-  );
-}
-function Mail({ active }: IP) {
-  return (
-    <svg {...S(active)}>
-      <rect x="2" y="3.5" width="12" height="9" rx="1.5" />
-      <path d="M2.5 4.5l5.5 4.5 5.5-4.5" />
     </svg>
   );
 }

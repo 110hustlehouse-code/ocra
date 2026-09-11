@@ -38,7 +38,6 @@ const STEPS: Step[] = [
   { page: "/dashboard", target: "verbale-panel", section: "Dashboard", title: "Ultimo verbale AI", body: "Generato automaticamente da Fireflies + Claude, con le azioni già assegnate a chi deve farle. Spuntale direttamente da qui." },
   { page: "/dashboard", target: "riunioni-panel", section: "Dashboard", title: "Prossime riunioni", body: "Le riunioni in calendario, con lo stato del verbale: se è già pronto o se Fireflies lo sta ancora elaborando." },
   { page: "/dashboard", target: "funnel-panel", section: "Dashboard", title: "Pipeline commerciale", body: "Il valore delle trattative in ogni fase del funnel, colpo d'occhio immediato su dove si concentra il fatturato potenziale." },
-  { page: "/dashboard", target: "marketing-reporting-widget", section: "Dashboard", title: "Marketing & Reporting a colpo d'occhio", body: "Reach, apertura email e automazioni WhatsApp in sintesi. Il dettaglio completo vive nelle sezioni Reporting e Marketing." },
 
   // ── Clienti ──
   {
@@ -129,7 +128,6 @@ const STEPS: Step[] = [
   { page: "/operativo", target: "operativo-cashflow", section: "Operativo", title: "Previsione di cassa", body: "Entrate attese e uscite previste nelle prossime 8 settimane, con il saldo netto proiettato." },
   { page: "/operativo", target: "operativo-solleciti", section: "Operativo", title: "Solleciti automatici", body: "Il primo sollecito parte da solo a 7 giorni dalla scadenza, il secondo a 21 con il responsabile in copia." },
   { page: "/operativo", target: "operativo-po", section: "Operativo", title: "Generatore codice PO", body: "Genera il codice ordine nel formato standard dell'agenzia, pronto da copiare in un click." },
-  { page: "/operativo", target: "operativo-ritenuta", section: "Operativo", title: "Ritenuta d'acconto", body: "Calcolo automatico della ritenuta per i collaboratori: base imponibile, ritenuta al 20% e netto da pagare, con i riferimenti normativi. Basta aprire la tendina." },
 
   // ── Reporting ──
   {

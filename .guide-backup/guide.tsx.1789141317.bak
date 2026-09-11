@@ -38,7 +38,6 @@ const STEPS: Step[] = [
   { page: "/dashboard", target: "verbale-panel", section: "Dashboard", title: "Ultimo verbale AI", body: "Generato automaticamente da Fireflies + Claude, con le azioni già assegnate a chi deve farle. Spuntale direttamente da qui." },
   { page: "/dashboard", target: "riunioni-panel", section: "Dashboard", title: "Prossime riunioni", body: "Le riunioni in calendario, con lo stato del verbale: se è già pronto o se Fireflies lo sta ancora elaborando." },
   { page: "/dashboard", target: "funnel-panel", section: "Dashboard", title: "Pipeline commerciale", body: "Il valore delle trattative in ogni fase del funnel, colpo d'occhio immediato su dove si concentra il fatturato potenziale." },
-  { page: "/dashboard", target: "marketing-reporting-widget", section: "Dashboard", title: "Marketing & Reporting a colpo d'occhio", body: "Reach, apertura email e automazioni WhatsApp in sintesi. Il dettaglio completo vive nelle sezioni Reporting e Marketing." },
 
   // ── Clienti ──
   {
@@ -129,44 +128,6 @@ const STEPS: Step[] = [
   { page: "/operativo", target: "operativo-cashflow", section: "Operativo", title: "Previsione di cassa", body: "Entrate attese e uscite previste nelle prossime 8 settimane, con il saldo netto proiettato." },
   { page: "/operativo", target: "operativo-solleciti", section: "Operativo", title: "Solleciti automatici", body: "Il primo sollecito parte da solo a 7 giorni dalla scadenza, il secondo a 21 con il responsabile in copia." },
   { page: "/operativo", target: "operativo-po", section: "Operativo", title: "Generatore codice PO", body: "Genera il codice ordine nel formato standard dell'agenzia, pronto da copiare in un click." },
-  { page: "/operativo", target: "operativo-ritenuta", section: "Operativo", title: "Ritenuta d'acconto", body: "Calcolo automatico della ritenuta per i collaboratori: base imponibile, ritenuta al 20% e netto da pagare, con i riferimenti normativi. Basta aprire la tendina." },
-
-  // ── Reporting ──
-  {
-    page: "/reporting", section: "Reporting",
-    title: "Tutti i numeri in un posto solo",
-    body: "Performance social, web e campagne pubblicitarie aggregate su tutti i clienti — niente più fogli sparsi tra Meta, Analytics e report manuali.",
-    features: [
-      "Performance social per cliente: follower, crescita, engagement, reach",
-      "Web analytics: sessioni, pagine viste, tasso di conversione",
-      "Campagne attive con budget, speso e risultati",
-      "ADV su Meta, YouTube e TikTok con ROAS",
-      "ROI aggregato per cliente",
-    ],
-  },
-  { page: "/reporting", target: "reporting-kpi", section: "Reporting", title: "I numeri chiave", body: "Reach totale, spesa pubblicitaria, ROAS medio e conversioni web — la fotografia generale in quattro numeri." },
-  { page: "/reporting", target: "reporting-social", section: "Reporting", title: "Social per cliente", body: "Follower, crescita ed engagement su Instagram, Facebook e LinkedIn, cliente per cliente." },
-  { page: "/reporting", target: "reporting-web", section: "Reporting", title: "Web analytics", body: "Sessioni, pagine viste e tasso di conversione per ogni sito cliente." },
-  { page: "/reporting", target: "reporting-campagne", section: "Reporting", title: "Performance campagne", body: "Ogni campagna attiva con budget, speso e risultati — a colpo d'occhio quali stanno rendendo." },
-  { page: "/reporting", target: "reporting-adv", section: "Reporting", title: "ADV per piattaforma", body: "Spesa, impression, CTR e ROAS separati per Meta, YouTube e TikTok." },
-  { page: "/reporting", target: "reporting-roi", section: "Reporting", title: "ROI per cliente", body: "Investimento contro risultato ottenuto, per capire dove il marketing sta davvero rendendo." },
-
-  // ── Marketing (Email + WhatsApp) ──
-  {
-    page: "/marketing", section: "Marketing",
-    title: "Email e WhatsApp, insieme",
-    body: "Le due leve di comunicazione segmentata dell'agenzia in un'unica vista, invece di due strumenti separati.",
-    features: [
-      "Liste segmentate: clienti, lead, artisti St'Art Factory, newsletter",
-      "Campagne email con apertura e click per ogni invio",
-      "Automazioni WhatsApp collegate a eventi reali: nuova riunione, fattura in scadenza, follow-up",
-      "Tutto tracciato, nessun invio manuale ripetitivo",
-    ],
-  },
-  { page: "/marketing", target: "marketing-kpi", section: "Marketing", title: "I numeri della comunicazione", body: "Contatti totali in lista, email inviate questo mese, apertura media e messaggi WhatsApp automatici partiti da soli." },
-  { page: "/marketing", target: "marketing-liste", section: "Marketing", title: "Liste segmentate", body: "Clienti attivi, lead in pipeline, artisti St'Art Factory e newsletter generale — ogni comunicazione parte dal segmento giusto." },
-  { page: "/marketing", target: "marketing-email", section: "Marketing", title: "Campagne email", body: "Ogni invio con tasso di apertura e di click, per capire cosa funziona e cosa va rivisto." },
-  { page: "/marketing", target: "marketing-whatsapp", section: "Marketing", title: "Automazioni WhatsApp", body: "Messaggi che partono da soli quando succede qualcosa di specifico: una riunione fissata, una fattura in scadenza, un lead silenzioso da 5 giorni." },
 ];
 
 type Rect = { top: number; left: number; width: number; height: number };

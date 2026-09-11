@@ -6,7 +6,6 @@ import { eur, eur2, dayMonth, dateIt, daysFromToday, TODAY, generatePoCode, serv
 import { Badge, Panel, PageHead, Empty } from "@/components/ui/kit";
 import { useToast } from "@/components/ui/toast";
 import { RitenutaCalc } from "@/components/compliance/compliance-panel";
-import { Accordion } from "@/components/ui/accordion";
 
 type Filter = "tutte" | "entrate" | "uscite" | "scadute";
 
@@ -151,9 +150,6 @@ export default function OperativoPage() {
           <div data-guide="operativo-po">
           <PoGenerator />
           </div>
-          <Accordion title="Ritenuta d'acconto" dataGuide="operativo-ritenuta">
-            <RitenutaCalc />
-          </Accordion>
         </div>
       </div>
     </div>
