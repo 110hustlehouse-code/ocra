@@ -11,3 +11,5 @@ ocra-local/
 *.tsbuildinfo
 
 !.env.example
+.guide-backup/
+apply-*.sh
