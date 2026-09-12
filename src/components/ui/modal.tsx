@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 
 export function Modal({
   open, onClose, title, sub, children, width = 560,
@@ -8,6 +9,12 @@ export function Modal({
   open: boolean; onClose: () => void; title: string; sub?: string;
   children: React.ReactNode; width?: number;
 }) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   React.useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -19,28 +26,75 @@ export function Modal({
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-10 px-4"
-      style={{ background: "rgba(10,10,11,.65)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
       onClick={onClose}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 9990,
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        paddingTop: 80,
+        paddingBottom: 40,
+        overflowY: "auto",
+        background: "rgba(8,8,10,0.7)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+      }}
     >
       <div
-        className="rise w-full"
-        style={{ maxWidth: width, background: "#fff", borderRadius: "var(--r-lg)", boxShadow: "0 24px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.06)" }}
         onClick={(e) => e.stopPropagation()}
+        style={{
+          width: "100%",
+          maxWidth: width,
+          background: "#ffffff",
+          borderRadius: 16,
+          boxShadow: "0 32px 100px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,0,0,0.08)",
+          animation: "rise 0.25s cubic-bezier(0.2, 0, 0, 1) both",
+        }}
       >
-        <div className="card-head">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "16px 24px",
+            borderBottom: "1px solid rgba(0,0,0,0.06)",
+          }}
+        >
           <div>
-            <h2 className="t-sec">{title}</h2>
-            {sub && <p className="t-meta mt-0.5">{sub}</p>}
+            <h2 style={{ fontSize: 15, fontWeight: 650, letterSpacing: "-0.01em", color: "#111" }}>{title}</h2>
+            {sub && <p style={{ fontSize: 12, color: "#888", marginTop: 2 }}>{sub}</p>}
           </div>
-          <button onClick={onClose} className="btn btn-ghost btn-sm" aria-label="Chiudi">✕</button>
+          <button
+            onClick={onClose}
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: 8,
+              border: "1px solid rgba(0,0,0,0.08)",
+              background: "transparent",
+              cursor: "pointer",
+              fontSize: 14,
+              color: "#888",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            \u2715
+          </button>
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
