@@ -24,12 +24,12 @@ export function Modal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-10 px-4"
-      style={{ background: "rgba(15,16,18,.42)", backdropFilter: "blur(2px)" }}
+      style={{ background: "rgba(10,10,11,.65)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
       onClick={onClose}
     >
       <div
-        className="card rise w-full"
-        style={{ maxWidth: width, boxShadow: "var(--shadow)" }}
+        className="rise w-full"
+        style={{ maxWidth: width, background: "#fff", borderRadius: "var(--r-lg)", boxShadow: "0 24px 80px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.06)" }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="card-head">
