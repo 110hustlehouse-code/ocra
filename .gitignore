@@ -13,3 +13,4 @@ ocra-local/
 !.env.example
 .guide-backup/
 apply-*.sh
+.vercel
