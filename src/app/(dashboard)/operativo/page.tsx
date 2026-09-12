@@ -54,8 +54,7 @@ export default function OperativoPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5 items-start">
-        <div className="space-y-5">
+      <div className="space-y-5">
           <div data-guide="operativo-scadenziario">
           <Panel
             title="Scadenziario"
@@ -142,9 +141,6 @@ export default function OperativoPage() {
           <div data-guide="operativo-cashflow">
           <Cashflow invoices={s.invoices} />
           </div>
-        </div>
-
-        <div className="space-y-5">
           <div data-guide="operativo-solleciti">
           <Solleciti />
           </div>
@@ -154,7 +150,6 @@ export default function OperativoPage() {
           <Accordion title="Ritenuta d'acconto" dataGuide="operativo-ritenuta">
             <RitenutaCalc />
           </Accordion>
-        </div>
       </div>
     </div>
   );
