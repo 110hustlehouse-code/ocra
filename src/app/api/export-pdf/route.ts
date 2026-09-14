@@ -1,11 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
-import { chromium } from "playwright";
+import { chromium as playwright } from "playwright-core";
 import { renderFulcroDocHtml } from "@/lib/pdf-template";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+
+async function launchBrowser() {
+  if (process.env.VERCEL) {
+    const chromium = (await import("@sparticuz/chromium")).default;
+    return playwright.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: true,
+    });
+  }
+  // In locale (Codespace) usa il Chromium già installato via `npx playwright install chromium`
+  return playwright.launch({ headless: true });
+}
 
 export async function POST(req: NextRequest) {
   let body: {
@@ -38,7 +52,7 @@ export async function POST(req: NextRequest) {
 
   let browser;
   try {
-    browser = await chromium.launch();
+    browser = await launchBrowser();
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "networkidle" });
     const pdf = await page.pdf({
@@ -56,7 +70,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : "errore sconosciuto";
     return NextResponse.json(
-      { error: `Generazione PDF fallita: ${msg}. Hai eseguito "npx playwright install chromium" nel Codespace?` },
+      { error: `Generazione PDF fallita: ${msg}` },
       { status: 500 }
     );
   } finally {
@@ -74,4 +88,3 @@ function slug(s: string): string {
       .replace(/(^-|-$)/g, "") || "documento"
   );
 }
-
