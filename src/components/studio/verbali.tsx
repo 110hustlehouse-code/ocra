@@ -6,6 +6,14 @@ import { dateIt, dayMonth } from "@/lib/demo/data";
 import { Badge, Panel, Empty, Avatar } from "@/components/ui/kit";
 import { useStream, Output } from "./output";
 import { useToast } from "@/components/ui/toast";
+import { MeetingLiveModal } from "./meeting-live";
+
+function useDocNumber() {
+  return React.useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
+  }, []);
+}
 
 export function VerbaliTab() {
   const s = useStore();
@@ -13,7 +21,9 @@ export function VerbaliTab() {
   const [sel, setSel] = React.useState(s.meetings.find((m) => m.status === "trascritto")?.id ?? s.meetings[0]?.id);
   const [manual, setManual] = React.useState(false);
   const [raw, setRaw] = React.useState("");
+  const [meetingOpen, setMeetingOpen] = React.useState(false);
   const { text, loading, error, run } = useStream();
+  const docNumber = useDocNumber();
 
   const m = s.meetings.find((x) => x.id === sel);
 
@@ -70,12 +80,20 @@ export function VerbaliTab() {
 
         </div>
 
-        <button
-          className="btn btn-ghost w-full"
-          onClick={() => { setManual(true); }}
-        >
-          Incolla una trascrizione
-        </button>
+        <div className="flex gap-2">
+          <button
+            className="btn btn-brand flex-1"
+            onClick={() => setMeetingOpen(true)}
+          >
+            Avvia riunione
+          </button>
+          <button
+            className="btn btn-ghost flex-1"
+            onClick={() => { setManual(true); }}
+          >
+            Incolla trascrizione
+          </button>
+        </div>
 
         <div className="card card-pad" data-guide="studio-come-funziona">
           <div className="t-label mb-2">Come funziona</div>
@@ -112,7 +130,21 @@ export function VerbaliTab() {
                 </div>
               </div>
             </Panel>
-            <Output text={text} loading={loading} error={error} empty="Nessun verbale generato" filename="verbale.txt" />
+            <Output
+              text={text}
+              loading={loading}
+              error={error}
+              empty="Nessun verbale generato"
+              filename="verbale.txt"
+              pdf={{
+                docType: "Verbale",
+                docNumber,
+                title: "Verbale riunione",
+                meta: [
+                  { label: "Data", value: new Date().toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" }) },
+                ],
+              }}
+            />
           </>
         ) : !m ? (
           <Panel><Empty title="Nessuna riunione selezionata" /></Panel>
@@ -192,11 +224,33 @@ export function VerbaliTab() {
             </div>
 
             {(loading || text) && (
-              <Output text={text} loading={loading} error={error} empty="" filename={`verbale-${m.id}.txt`} />
+              <Output
+                text={text}
+                loading={loading}
+                error={error}
+                empty=""
+                filename={`verbale-${m.id}.txt`}
+                pdf={{
+                  docType: "Verbale",
+                  docNumber,
+                  title: m.title,
+                  meta: [
+                    { label: "Data", value: dateIt(m.date) },
+                    { label: "Partecipanti", value: m.participants.join(", ") },
+                  ],
+                }}
+              />
             )}
           </>
         )}
       </div>
+
+      <MeetingLiveModal
+        open={meetingOpen}
+        onClose={() => setMeetingOpen(false)}
+        onTranscriptReady={(t) => { setRaw(t); setManual(true); }}
+      />
     </div>
   );
 }
+

@@ -14,6 +14,11 @@ export function BandiTab() {
   const b = s.bandi.find((x) => x.id === sel);
   const portafoglio = s.clients.map((c) => `${c.companyName} (${c.sector})`).join(", ");
 
+  const docNumber = React.useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
+  }, []);
+
   return (
     <div className="grid grid-cols-[340px_1fr] gap-5 items-start">
       <div className="space-y-4">
@@ -100,8 +105,25 @@ export function BandiTab() {
             </div>
           </Panel>
         )}
-        <Output text={text} loading={loading} error={error} empty="Nessuna analisi generata" filename="analisi-bando.txt" />
+        <Output
+          text={text}
+          loading={loading}
+          error={error}
+          empty="Nessuna analisi generata"
+          filename="analisi-bando.txt"
+          pdf={b ? {
+            docType: "Analisi Bando",
+            docNumber,
+            title: b.name,
+            meta: [
+              { label: "Ente", value: b.entity },
+              { label: "Scadenza", value: dateIt(b.deadline) },
+              { label: "Importo", value: b.amount },
+            ],
+          } : undefined}
+        />
       </div>
     </div>
   );
 }
+

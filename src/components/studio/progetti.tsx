@@ -30,6 +30,11 @@ export function ProgettiTab() {
   });
   const { text, loading, error, run } = useStream();
 
+  const docNumber = React.useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
+  }, []);
+
   const set = <K extends keyof typeof f>(k: K) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setF((p) => ({ ...p, [k]: e.target.value }));
@@ -93,7 +98,24 @@ export function ProgettiTab() {
         </div>
       </div>
 
-      <Output text={text} loading={loading} error={error} empty="Nessuna sezione scritta" filename={`${f.section.toLowerCase().replace(/\s+/g, "-")}.txt`} />
+      <Output
+        text={text}
+        loading={loading}
+        error={error}
+        empty="Nessuna sezione scritta"
+        filename={`${f.section.toLowerCase().replace(/\s+/g, "-")}.txt`}
+        pdf={{
+          docType: "Proposta Progetto",
+          docNumber,
+          title: `${f.projectName || "Progetto"} — ${f.section}`,
+          meta: [
+            { label: "Bando", value: f.bando || "—" },
+            { label: "Sezione", value: f.section },
+            { label: "Lunghezza", value: f.length },
+          ],
+        }}
+      />
     </div>
   );
 }
+

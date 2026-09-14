@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Empty } from "@/components/ui/kit";
+import { useToast } from "@/components/ui/toast";
 
 /** Hook di streaming: consuma la risposta della route AI token per token. */
 export function useStream() {
@@ -41,14 +42,25 @@ export function useStream() {
   return { text, loading, error, done, run, reset: () => { setText(""); setDone(false); } };
 }
 
+/** Metadati per il PDF brandizzato Fulcro Lucem — passati dal modulo che usa <Output>. */
+export type PdfMeta = {
+  docType: string;
+  docNumber?: string;
+  title: string;
+  meta?: { label: string; value: string }[];
+};
+
 export function Output({
-  text, loading, error, empty, filename, done,
+  text, loading, error, empty, filename, done, pdf,
 }: {
   text: string; loading: boolean; error?: string | null; empty: string; filename: string; done?: boolean;
+  pdf?: PdfMeta;
 }) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [copied, setCopied] = React.useState(false);
   const [showDone, setShowDone] = React.useState(false);
+  const [generating, setGenerating] = React.useState(false);
+  const toast = useToast();
 
   React.useEffect(() => {
     if (loading && ref.current) ref.current.scrollTop = ref.current.scrollHeight;
@@ -79,6 +91,31 @@ export function Output({
     URL.revokeObjectURL(url);
   };
 
+  const generatePdf = async () => {
+    if (!pdf || !text) return;
+    setGenerating(true);
+    try {
+      const res = await fetch("/api/export-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...pdf, markdown: text }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${pdf.docType.toLowerCase()}-${slug(pdf.title)}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast("PDF generato con il branding Fulcro Lucem", "brand");
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Errore nella generazione del PDF", "warn");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <section className="card overflow-hidden flex flex-col" style={{ minHeight: 520 }}>
       <div className="card-head">
@@ -99,7 +136,12 @@ export function Output({
         {text && !loading && (
           <div className="flex gap-2">
             <button className="btn btn-ghost btn-sm" onClick={copy}>{copied ? "Copiato ✓" : "Copia"}</button>
-            <button className="btn btn-ghost btn-sm" onClick={download}>Scarica</button>
+            <button className="btn btn-ghost btn-sm" onClick={download}>Scarica .txt</button>
+            {pdf && (
+              <button className="btn btn-brand btn-sm" onClick={generatePdf} disabled={generating}>
+                {generating ? "Genero PDF…" : "Genera PDF"}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -125,3 +167,12 @@ export function Output({
     </section>
   );
 }
+
+function slug(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "") || "documento";
+}
+
